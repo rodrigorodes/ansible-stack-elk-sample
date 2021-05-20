@@ -1,0 +1,1 @@
+# ansible-stack-elk-sample
