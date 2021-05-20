@@ -1,0 +1,57 @@
+---
+- name: Import the Elastic Key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  become: yes
+
+- name: Adding Elastic APT repository
+  apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    state: present
+    filename: elastic-7.x.list
+    update_cache: yes
+  become: yes
+
+- name: install elasticsearch
+  apt:
+    name: elasticsearch
+    state: present
+    update_cache: yes
+  become: yes
+    
+- name: ensure elasticsearch is running
+  systemd: state=started name=elasticsearch
+  become: yes
+
+- name: Configure elasticsearch.yml File
+  copy:
+    src: '{{item.src}}'
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: elasticsearch
+  with_items:                                                                                                                                                 
+    - { src: '{{INFRA_REPOSITORY}}/config/elasticsearch/elasticsearch.yml'}
+  become: yes
+
+- name: set elasticsearch permissions
+  file:
+    path: /usr/share/elasticsearch
+    state: directory
+    recurse: yes
+    owner: elasticsearch
+    group: elasticsearch
+  become: yes
+
+- name: restart elasticsearch after change configuration by configure-elastic-file role
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: elasticsearch
+  become: yes
+    
+- name: ensure elasticsearch is running
+  systemd:
+    state=started
+    name=elasticsearch
+  become: yes

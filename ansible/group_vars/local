@@ -1,0 +1,13 @@
+---
+
+ENV_NAME: "local"
+
+ATMZ_HOME: "{{ansible_env.HOME}}/atmz"
+
+COPY_FROM_REMOTE_HOST: no
+
+## Repositories ##
+INFRA_REPOSITORY: "{{ATMZ_HOME}}/ansible-elk"
+GIT_CLONE_INFRA_REPOSITORY: True
+
+

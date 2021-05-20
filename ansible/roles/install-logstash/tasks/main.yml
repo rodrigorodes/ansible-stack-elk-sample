@@ -1,0 +1,63 @@
+---
+
+- name: Adding APT repository
+  apt_repository:
+   repo: deb  https://artifacts.elastic.co/packages/7.x/apt  stable main
+   state: present
+  become: yes
+
+# Installing Logstash
+- name: Update repositories cache and install Logstash
+  apt:
+   name: logstash
+   update_cache: yes
+  become: yes
+
+#--------------------------
+## LOGSTASH Configuração-
+#--------------------------
+
+- name: Creates **Folder_Pipeline**
+  file:
+    path: '/usr/share/logstash/pipeline'
+    state: directory
+    owner: 'root'
+    group: 'root'
+    mode: 0775
+  become: yes
+
+- name: Configure logstash.yml File
+  copy:
+    src: '{{INFRA_REPOSITORY}}/config/logstash/logstash.yml'
+    dest: /etc/logstash/logstash.yml
+  become: yes
+
+- name: Configure Pipeline File
+  copy:
+    src: '{{INFRA_REPOSITORY}}/config/logstash/pipeline/logstash.conf'
+    dest: /usr/share/logstash/pipeline/logstash.conf
+  become: yes
+
+- name: set logstash permissions
+  file:
+    path: /usr/share/logstash
+    state: directory
+    recurse: yes
+    owner: logstash
+    group: logstash
+  become: yes
+
+# Enable Logstash service
+- name: Enable Logstash service
+  systemd:
+    name: logstash
+    enabled: yes
+  become: yes
+
+# Start Logstash service
+- name: Start Logstash service
+  systemd:
+    name: logstash
+    state: started
+    daemon_reload: yes
+  become: yes

@@ -1,0 +1,23 @@
+---
+
+- name: "Create QA environment Remote"
+  hosts: "localhost"
+  connection: local
+  
+  roles:
+  - { role: pre-requisites, tags: ['elk-commons'] }
+  - { role: install-elasticsearch, tags: ['elastics'] }
+  - { role: install-kibana, tags: ['kibana'] }
+  - { role: install-logstash, tags: ['logstash'] }
+  - { role: install-filebeat, tags: ['filebeat'] }
+
+
+
+  
+
+
+ 
+
+
+
+

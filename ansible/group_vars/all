@@ -1,0 +1,8 @@
+---
+
+## Kibana internal ##
+ELK_ELASTICSEARCH_USER: elastic
+ELK_ELASTICSEARCH_PASSWORD: changeme
+ELK_ELASTICSEARCH_URL: "{{ ansible_default_ipv4.address }}:9200"
+
+

@@ -1,0 +1,47 @@
+---
+- name: Import the Elastic Key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  become: yes
+
+- name: Adiciona Kibana APT repository
+  apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    state: present
+    filename: kibana-7.x.list
+    update_cache: yes
+  become: yes
+
+# Install Kibana
+- name: Update repositories cache e Instalação Kibana
+  apt:
+    name: kibana
+    update_cache: yes
+  become: yes
+    
+# Configure kibana.yml
+- name: Configure kibana.yml File
+  copy:
+    src: '{{INFRA_REPOSITORY}}/config/kibana/kibana.yml'
+    dest: /etc/kibana/kibana.yml
+  become: yes
+
+# Enable Kibana service
+- name: Enabling Kibana service
+  systemd:
+    name: kibana
+    enabled: yes
+    daemon_reload: yes
+  become: yes
+
+# Start Kibana service
+- name: Starting Kibana service
+  systemd:
+    name: kibana
+    state: started
+  become: yes
+
+- name: Ensure Kibana is running
+  systemd: state=started name=kibana
+  become: yes
